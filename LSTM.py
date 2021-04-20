@@ -18,16 +18,16 @@ class RNN(nn.Module):
         out1 = out.view(a,b,-1) #因为是循环神经网络，最后的时候要把二维的out调整成三维数据，下一次循环使用
         return out1
 
-df1 = pd.read_csv('ele_loads.csv')
+df1 = pd.read_csv('data/ele_loads.csv')
 
 #一、数据准备
 
-datas = df1.values
+datas = df1.values[:, 2]
+print(datas.shape)
 
 #归一化处理，这一步必不可少，不然后面训练数据误差会很大，模型没法用
 
 max_value = np.max(datas)
-
 min_value = np.min(datas)
 scalar = max_value - min_value
 datas = list(map(lambda x: x / scalar, datas))
@@ -40,7 +40,7 @@ def creat_dataset(dataset,look_back):
     for i in range(len(dataset)-look_back):
         data_x.append(dataset[i:i+look_back])
         data_y.append(dataset[i+look_back])
-        return np.asarray(data_x), np.asarray(data_y) #转为ndarray数据
+    return np.asarray(data_x), np.asarray(data_y) #转为ndarray数据
 
 #以2为特征维度，得到数据集
 
@@ -69,11 +69,12 @@ loss_func = nn.MSELoss()
 for i in range(1000):
     var_x = Variable(x_train).type(torch.FloatTensor)
     var_y = Variable(y_train).type(torch.FloatTensor)
+    print(var_y)
     out = rnn(var_x)
     loss = loss_func(out,var_y)
     optimizer.zero_grad()
     loss.backward()
     optimizer.step()
-    if (i+1) % 100==0:
+    if (i+1) % 10==0:
         print('Epoch:{}, Loss:{:.5f}'.format(i+1, loss.item()))
 
