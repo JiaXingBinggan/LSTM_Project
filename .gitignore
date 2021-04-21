@@ -129,3 +129,8 @@ dmypy.json
 .pyre/
 
 .idea/
+
+main/plot/
+main/record/
+main/result/
+
