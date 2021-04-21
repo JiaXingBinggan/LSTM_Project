@@ -63,18 +63,12 @@ class MLP(nn.Module):
     def __init__(self,
                  feature_nums,
                  neuron_nums,
-<<<<<<< HEAD
                  dropout_rate,
-=======
->>>>>>> 78018e8c3cfd0b3d1c83041e1e43ffc855a7f79c
                  output_dim=1):
         super(MLP, self).__init__()
         self.feature_nums = feature_nums
         self.neuron_nums = neuron_nums
-<<<<<<< HEAD
         self.dropout_rate = dropout_rate
-=======
->>>>>>> 78018e8c3cfd0b3d1c83041e1e43ffc855a7f79c
 
         deep_input_dims = self.feature_nums
 
@@ -90,11 +84,7 @@ class MLP(nn.Module):
 
         weight_init(layers)
 
-<<<<<<< HEAD
         layers.append(nn.Linear(deep_input_dims, output_dim))
-=======
-        layers.append(nn.Linear(deep_input_dims, 1))
->>>>>>> 78018e8c3cfd0b3d1c83041e1e43ffc855a7f79c
 
         self.mlp = nn.Sequential(*layers)
 
