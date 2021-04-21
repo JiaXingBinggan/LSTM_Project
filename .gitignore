@@ -130,6 +130,7 @@ dmypy.json
 
 .idea/
 
-data/plot/
-data/record/
+main/plot/
+main/record/
+main/result/
 

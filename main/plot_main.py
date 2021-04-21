@@ -63,10 +63,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_path', default='../data/')
     parser.add_argument('--dataset_name', default='ele_loads.csv', help='dataset')
-    parser.add_argument('--model_name', default='LR', help='LR, RNN')
+    parser.add_argument('--model_name', default='LR', help='LR, RNN, MLP')
     parser.add_argument('--look_back', default=2, help='以几行数据为特征维度数量')
 
-    parser.add_argument('--plot_gap', type=int, default=50)
+    parser.add_argument('--plot_gap', type=int, default=100)
     parser.add_argument('--loss_type', type=str, default='mse', help='smoothl1loss')
     parser.add_argument('--save_log_dir', default='log/')
     parser.add_argument('--save_plot_dir', default='plot/')
@@ -79,10 +79,10 @@ if __name__ == '__main__':
     setup_seed(1)
 
     mk_dir(args.save_plot_dir, args.model_name)
-    save_plot_dir = args.data_path + args.save_plot_dir + args.model_name + '/'
+    save_plot_dir = args.save_plot_dir + args.model_name + '/'
 
     mk_dir(args.save_record_dir, args.model_name)
-    save_record_dir = args.data_path + args.save_record_dir + args.model_name + '/'
+    save_record_dir = args.save_record_dir + args.model_name + '/'
 
     logging.basicConfig(level=logging.DEBUG,
                         filename=args.save_log_dir + args.model_name + '_plot.log',

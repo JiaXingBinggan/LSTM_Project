@@ -62,15 +62,17 @@ class RNN(nn.Module):
 class MLP(nn.Module):
     def __init__(self,
                  feature_nums,
+                 neuron_nums,
                  output_dim=1):
         super(MLP, self).__init__()
         self.feature_nums = feature_nums
+        self.neuron_nums = neuron_nums
 
         deep_input_dims = self.feature_nums
 
         layers = list()
 
-        neuron_nums = [self.feature_nums * 2, self.feature_nums, self.feature_nums * 2]
+        neuron_nums = self.neuron_nums
         for neuron_num in neuron_nums:
             layers.append(nn.Linear(deep_input_dims, neuron_num))
             # layers.append(nn.BatchNorm1d(neuron_num))

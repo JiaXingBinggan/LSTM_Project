@@ -24,11 +24,11 @@ def setup_seed(seed):
     torch.backends.cudnn.deterministic = True
 
 
-def get_model(model_name, feature_nums, hidden_dims, bi_lstm):
+def get_model(model_name, feature_nums, hidden_dims, bi_lstm, neuron_nums):
     if model_name == 'LR':
         return Model.LR(feature_nums)
     if model_name == 'MLP':
-        return Model.MLP(feature_nums)
+        return Model.MLP(feature_nums, neuron_nums)
     elif model_name == 'RNN':
         return Model.RNN(feature_nums, hidden_dims, bi_lstm)
 
@@ -106,7 +106,7 @@ def main(args, logger):
     train_data_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers)
 
     feature_nums = args.look_back
-    model = get_model(args.model_name, feature_nums, args.hidden_dims, args.bi_lstm).to(device)
+    model = get_model(args.model_name, feature_nums, args.hidden_dims, args.bi_lstm, args.neuron_nums).to(device)
 
     if args.loss_type == 'mse':
         loss = nn.MSELoss()
@@ -148,7 +148,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_path', default='../data/')
     parser.add_argument('--dataset_name', default='ele_loads.csv', help='dataset')
-    parser.add_argument('--model_name', default='RNN', help='LR, RNN, MLP')
+    parser.add_argument('--model_name', default='MLP', help='LR, RNN, MLP')
+    parser.add_argument('--neuron_nums', type=list, default=[32, 16])
     parser.add_argument('--num_workers', default=8, help='4, 8, 16, 32')
     parser.add_argument('--hidden_dims', default=8)
     parser.add_argument('--bi_lstm', default=2, help='1, 2')
