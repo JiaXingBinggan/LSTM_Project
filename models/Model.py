@@ -5,13 +5,25 @@ import torch.utils.data
 
 import numpy as np
 
+def weight_init(layers):
+    for layer in layers:
+        if isinstance(layer, nn.BatchNorm1d):
+            layer.weight.data.fill_(1)
+            layer.bias.data.zero_()
+        elif isinstance(layer, nn.Linear):
+            n = layer.in_features
+            y = 1.0 / np.sqrt(n)
+            layer.weight.data.uniform_(-y, y)
+            layer.bias.data.fill_(0)
+            # nn.init.kaiming_normal_(layer.weight.data, nonlinearity='relu')
+
 # 传统的预测点击率模型
 class LR(nn.Module):
     def __init__(self,
                  feature_nums,
                  output_dim = 1):
         super(LR, self).__init__()
-        self.linear = nn.Embedding(feature_nums, output_dim)
+        self.linear = nn.Linear(feature_nums, output_dim)
 
         self.bias = nn.Parameter(torch.zeros((output_dim,)))
 
@@ -21,9 +33,8 @@ class LR(nn.Module):
             :return: pctrs
         """
         out = self.bias + torch.sum(self.linear(x), dim=1)
-        pctrs = torch.sigmoid(out)
 
-        return pctrs
+        return out.unsqueeze(1)
 
 
 class RNN(nn.Module):
@@ -47,3 +58,37 @@ class RNN(nn.Module):
         out1 = out.view(a, b, -1)
 
         return out1
+
+class MLP(nn.Module):
+    def __init__(self,
+                 feature_nums,
+                 output_dim=1):
+        super(MLP, self).__init__()
+        self.feature_nums = feature_nums
+
+        deep_input_dims = self.feature_nums
+
+        layers = list()
+
+        neuron_nums = [self.feature_nums * 2, self.feature_nums, self.feature_nums * 2]
+        for neuron_num in neuron_nums:
+            layers.append(nn.Linear(deep_input_dims, neuron_num))
+            # layers.append(nn.BatchNorm1d(neuron_num))
+            layers.append(nn.ReLU())
+            layers.append(nn.Dropout(p=0.2))
+            deep_input_dims = neuron_num
+
+        weight_init(layers)
+
+        layers.append(nn.Linear(deep_input_dims, 1))
+
+        self.mlp = nn.Sequential(*layers)
+
+    def forward(self, x):
+        """
+        :param x: Int tensor of size (batch_size, feature_nums, latent_nums)
+        :return: pctrs
+        """
+        out = self.mlp(x)
+
+        return out
